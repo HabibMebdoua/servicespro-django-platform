@@ -48,6 +48,9 @@ INSTALLED_APPS = [
 
 
     'bootstrap5',
+
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -159,3 +162,12 @@ EMAIL_HOST_USER = 'servicespro.app@gmail.com'
 EMAIL_HOST_PASSWORD = 'oinz brgc zuuh wnrs'
 
 STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# Cloudinary settings
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
