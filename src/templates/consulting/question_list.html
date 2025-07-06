@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    قائمة الاستشارات
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">الاستشارات</h1>
+
+    <!-- نموذج الفلترة وزر نشر استفسار -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <form method="get" class="flex-grow-1 me-3">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="title" class="form-control shadow-sm" placeholder="ابحث عن عنوان..." value="{{ request.GET.title }}">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="category" class="form-control shadow-sm" placeholder="ابحث عن فئة..." value="{{ request.GET.category }}">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                        <i class="bi bi-filter"></i> فلتر
+                    </button>
+                </div>
+            </div>
+        </form>
+        <a href="{% url 'add_question' %}" class="btn btn-success shadow-sm m-2">
+            <i class="bi bi-plus-circle"></i> نشر استفسار
+        </a>
+    </div>
+
+    <!-- قائمة الاستشارات -->
+    <div class="row">
+        {% for question in questions %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'question_detail' question.id %}" class="text-decoration-none text-dark">{{ question.title }}</a>
+                    </h5>
+                    <p class="card-text text-muted mb-2">
+                        <i class="bi bi-person-fill"></i> تم النشر بواسطة: <span class="fw-bold">{{ question.user.username }}</span>
+                    </p>
+                    <p class="card-text text-muted">
+                        <i class="bi bi-calendar-event"></i> {{ question.created_at|date:"d M Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">لا توجد استشارات متاحة.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

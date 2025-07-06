@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    نجاح الطلب
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 text-center">
+    <h1 class="text-success mb-4">تم إنشاء الطلب بنجاح!</h1>
+    <p>شكراً لتسوقك معنا. سيتم التواصل معك قريباً لتأكيد الطلب.</p>
+    <a href="{% url 'store_list' %}" class="btn btn-primary">العودة إلى المتاجر</a>
+</div>
+{% endblock %}

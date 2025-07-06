@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    لوحة التحكم - الأستاذ
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">لوحة التحكم</h1>
+
+    <!-- نموذج إضافة دورة جديدة -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-success text-white text-center">
+            <h6 class="mb-0">إضافة دورة جديدة</h6>
+        </div>
+        <div class="card-body p-3">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="title" class="form-label">عنوان الدورة</label>
+                        <input type="text" name="title" id="title" class="form-control" placeholder="عنوان الدورة">
+                    </div>
+                    
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">وصف الدورة</label>
+                    <textarea name="description" id="description" class="form-control" rows="3" placeholder="وصف الدورة"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="price" class="form-label">السعر</label>
+                        <input type="number" name="price" id="price" class="form-control" placeholder="السعر">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="image" class="form-label">صورة الدورة</label>
+                        <input type="file" name="image" id="image" class="form-control">
+                    </div>
+                </div>
+                <button type="submit" name="add_course" class="btn btn-success w-100">إضافة الدورة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- جدول الدورات -->
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-warning">
+            <tr>
+                <th>عنوان الدورة</th>
+                <th>تاريخ نشر الدورة</th>
+                <th>السعر</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.title }}</td>
+                <td>{{ course.created_at }}</td>
+                <td>{{ course.price }} $</td>
+                <td>
+                    <!-- زر تعديل -->
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ course.id }}">تعديل</button>
+                    <!-- زر حذف -->
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ course.id }}">حذف</button>
+                    <!-- زر إضافة درس -->
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLessonModal{{ course.id }}">إضافة درس</button>
+                </td>
+            </tr>
+
+            <!-- Modal تعديل الدورة -->
+            <div class="modal fade" id="editModal{{ course.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ course.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel{{ course.id }}">تعديل الدورة: {{ course.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="edit_course_id" value="{{ course.id }}">
+                                <div class="mb-3">
+                                    <label for="title{{ course.id }}" class="form-label">عنوان الدورة</label>
+                                    <input type="text" name="title" id="title{{ course.id }}" class="form-control" value="{{ course.title }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description{{ course.id }}" class="form-label">وصف الدورة</label>
+                                    <textarea name="description" id="description{{ course.id }}" class="form-control" rows="4">{{ course.description }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="course_date{{ course.id }}" class="form-label">تاريخ الدورة</label>
+                                    <input type="date" name="course_date" id="course_date{{ course.id }}" class="form-control" value="{{ course.course_date }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price{{ course.id }}" class="form-label">السعر</label>
+                                    <input type="number" name="price" id="price{{ course.id }}" class="form-control" value="{{ course.price }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image{{ course.id }}" class="form-label">صورة الدورة</label>
+                                    <input type="file" name="image" id="image{{ course.id }}" class="form-control">
+                                    {% if course.image %}
+                                    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    {% endif %}
+                                </div>
+                                <button type="submit" class="btn btn-warning w-100 text-white">حفظ التعديلات</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal حذف الدورة -->
+            <div class="modal fade" id="deleteModal{{ course.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ course.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel{{ course.id }}">حذف الدورة: {{ course.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>هل أنت متأكد من أنك تريد حذف هذه الدورة؟</p>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_course_id" value="{{ course.id }}">
+                                <button type="submit" class="btn btn-danger w-100">نعم، حذف الدورة</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal إضافة درس -->
+            <div class="modal fade" id="addLessonModal{{ course.id }}" tabindex="-1" aria-labelledby="addLessonModalLabel{{ course.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addLessonModalLabel{{ course.id }}">إضافة درس للدورة: {{ course.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="course_id" value="{{ course.id }}">
+                                {{ lesson_form.as_p }}
+                                <button type="submit" name="add_lesson" class="btn btn-primary w-100">إضافة الدرس</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

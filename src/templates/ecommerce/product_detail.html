@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    تفاصيل المنتج - {{ product.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ product.name }}</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <img src="{{ product.image.url }}" class="img-fluid mb-4" alt="{{ product.name }}">
+            <p><strong>الوصف:</strong> {{ product.description }}</p>
+            <p><strong>السعر:</strong> {{ product.price }} $</p>
+            <p><strong>المتجر:</strong> <a href="{% url 'store_detail' product.store.id %}">{{ product.store.name }}</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

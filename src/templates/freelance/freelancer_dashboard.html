@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    لوحة التحكم - الفريلانسر
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">لوحة التحكم</h1>
+
+    <!-- الطلبات المتاحة -->
+    <h2 class="mb-3">الطلبات المتاحة</h2>
+    <div class="row justify-content-center mb-4 mt-4">
+        <div class="col-lg-12 text-center">
+            <a href="{% url 'add_service' %}" class="btn btn-success btn-lg">إضافة خدمة جديدة</a>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-warning">
+            <tr>
+                <th>رقم الطلب</th>
+                <th>الخدمة</th>
+                <th>العميل</th>
+                <th>البريد الإلكتروني</th>
+                <th>رقم الهاتف</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.service.title }}</td>
+                <td>{{ order.client.username }}</td>
+                <td>{{ order.client.email }}</td>
+                <td>{{ order.client.phone_number }}</td>
+                <td>
+                    <span class="badge 
+                        {% if order.status == 'delivered' %} bg-success 
+                        {% elif order.status == 'rejected' %} bg-danger 
+                        {% else %} bg-secondary 
+                        {% endif %}">
+                        {{ order.status }}
+                    </span>
+                </td>
+                <td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <button type="submit" name="action" value="accept" class="btn btn-success btn-sm">قبول</button>
+                        <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">رفض</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">لا توجد طلبات متاحة.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- الخدمات الخاصة بالفريلانسر -->
+    <h2 class="mt-5 mb-3">الخدمات الخاصة بك</h2>
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-warning">
+            <tr>
+                <th>عنوان الخدمة</th>
+                <th>السعر</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in services %}
+            <tr>
+                <td>{{ service.title }}</td>
+                <td>{{ service.price }} $</td>
+                <td>{{ service.is_available|yesno:"متاحة,غير متاحة" }}</td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ service.id }}">تعديل</button>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="service_id" value="{{ service.id }}">
+                        <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">حذف</button>
+                        <button type="submit" name="action" value="toggle_availability" class="btn btn-info btn-sm">تغيير الحالة</button>
+                    </form>
+                </td>
+            </tr>
+
+            <!-- Modal تعديل الخدمة -->
+            <div class="modal fade" id="editModal{{ service.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ service.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel{{ service.id }}">تعديل الخدمة: {{ service.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="service_id" value="{{ service.id }}">
+                                <div class="mb-3">
+                                    <label for="title{{ service.id }}" class="form-label">عنوان الخدمة</label>
+                                    <input type="text" name="title" id="title{{ service.id }}" class="form-control" value="{{ service.title }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description{{ service.id }}" class="form-label">وصف الخدمة</label>
+                                    <textarea name="description" id="description{{ service.id }}" class="form-control" rows="4">{{ service.description }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price{{ service.id }}" class="form-label">السعر</label>
+                                    <input type="number" name="price" id="price{{ service.id }}" class="form-control" value="{{ service.price }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image{{ service.id }}" class="form-label">صورة الخدمة</label>
+                                    <input type="file" name="image" id="image{{ service.id }}" class="form-control">
+                                    {% if service.image %}
+                                    <img src="{{ service.image.url }}" alt="{{ service.title }}" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    {% endif %}
+                                </div>
+                                <button type="submit" name="action" value="edit" class="btn btn-warning w-100">حفظ التعديلات</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

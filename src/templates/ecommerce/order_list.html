@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    قائمة الطلبات
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">الطلبات الخاصة بك</h1>
+    <div class="row">
+        {% for order in orders %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>طلب رقم: {{ order.id }}</h5>
+                    <p><strong>الحالة:</strong> {{ order.get_status_display }}</p>
+                    <p><strong>تاريخ الإنشاء:</strong> {{ order.created_at|date:"d M Y" }}</p>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">عرض التفاصيل</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">لا توجد طلبات متاحة.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

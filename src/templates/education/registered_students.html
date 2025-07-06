@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    التلاميذ المسجلين - {{ course.title }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">التلاميذ المسجلين في الدورة: {{ course.title }}</h1>
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-warning">
+            <tr>
+                <th>اسم التلميذ</th>
+                <th>البريد الإلكتروني</th>
+                <th>حالة القبول</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registration in registrations %}
+            <tr>
+                <td>{{ registration.student.username }}</td>
+                <td>{{ registration.student.email }}</td>
+                <td>
+                    {% if registration.is_accepted %}
+                        <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                        <span class="badge bg-secondary">غير مقبول</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not registration.is_accepted %}
+                        <form method="post" action="{% url 'accept_student' registration.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">قبول</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">لا يوجد تلاميذ مسجلين في هذه الدورة.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

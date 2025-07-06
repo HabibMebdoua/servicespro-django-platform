@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    تفاصيل السلة
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">السلة الخاصة بك</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>المنتج</th>
+                <th>السعر</th>
+                <th>الكمية</th>
+                <th>الإجمالي</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.product.price }} $</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price|floatformat:2|add:item.quantity }} $</td>
+                <td>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">إزالة</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="text-end">
+        <h4>الإجمالي: {{ total }} $</h4>
+        <a href="{% url 'place_order' %}" class="btn btn-success">إتمام الطلب</a>
+    </div>
+</div>
+{% endblock %}

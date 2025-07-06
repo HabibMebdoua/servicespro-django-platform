@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    إنشاء منتج جديد
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">إنشاء منتج جديد</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">اسم المنتج</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="أدخل اسم المنتج" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">وصف المنتج</label>
+            <textarea name="description" id="description" class="form-control" rows="4" placeholder="أدخل وصفاً للمنتج"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">السعر</label>
+            <input type="number" name="price" id="price" class="form-control" placeholder="أدخل سعر المنتج" required>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">صورة المنتج</label>
+            <input type="file" name="image" id="image" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">إنشاء المنتج</button>
+    </form>
+</div>
+{% endblock %}

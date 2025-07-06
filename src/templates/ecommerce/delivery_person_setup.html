@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    تسجيل بيانات عامل التوصيل
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">تسجيل بيانات عامل التوصيل</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="wilaya" class="form-label">الولاية</label>
+            <select name="wilaya" id="wilaya" class="form-control">
+                <option value="">-- اختر ولايتك --</option>
+                {% for code, name in wilayas %}
+                <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="vehicle_type" class="form-label">نوع المركبة</label>
+            <input type="text" name="vehicle_type" id="vehicle_type" class="form-control" placeholder="مثال: سيارة، دراجة نارية">
+        </div>
+        <button type="submit" class="btn btn-success">تسجيل</button>
+    </form>
+</div>
+{% endblock %}

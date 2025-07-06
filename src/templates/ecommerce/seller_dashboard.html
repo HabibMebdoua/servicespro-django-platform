@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    لوحة تحكم المتجر - {{ store.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">لوحة تحكم المتجر - {{ store.name }}</h1>
+
+    <!-- زر إنشاء منتج جديد -->
+    <a href="{% url 'create_product' %}" class="btn btn-primary mb-4">إنشاء منتج جديد</a>
+
+    <!-- عرض المنتجات الخاصة بالمتجر -->
+    <h2 class="mb-4">المنتجات</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>اسم المنتج</th>
+                <th>الوصف</th>
+                <th>السعر</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description|truncatewords:10 }}</td>
+                <td>{{ product.price }} $</td>
+                <td>
+                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm">حذف المنتج</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">لا توجد منتجات متاحة.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- عرض الطلبات الخاصة بالمتجر -->
+    <div class="row">
+        {% for order in orders %}
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">طلب رقم: {{ order.id }}</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th>الكمية</th>
+                                <th>الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.orderitem_set.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.quantity }}</td>             
+                                <td>{{ item.product.price|floatformat:2|add:item.quantity }} $</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p><strong>الزبون:</strong> {{ order.customer.username }}</p>
+                    <p><strong>رقم الهاتف:</strong> {{ order.customer.phone_number }}</p>
+                    <p><strong>الحالة الحالية:</strong> {{ order.get_status_display }}</p>
+                    <form method="post" action="{% url 'update_order_status' order.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="status" class="form-label">تحديث الحالة</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>قيد المعالجة</option>
+                                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>قيد التوصيل</option>
+                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>تم التوصيل</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="delivery_person" class="form-label">اختيار عامل التوصيل</label>
+                            <select name="delivery_person" id="delivery_person" class="form-control">
+                                <option value="">-- اختر عامل التوصيل --</option>
+                                {% for delivery_person in delivery_persons %}
+                                <option value="{{ delivery_person.id }}" {% if order.delivery_person == delivery_person %}selected{% endif %}>
+                                    {{ delivery_person.username }} - {{ delivery_person.phone_number }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">تحديث الطلب</button>
+                    </form>
+                    <a href="{% url 'cancel_order_by_seller' order.id %}" class="btn btn-danger mt-3">إلغاء الطلب</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">لا توجد طلبات متاحة.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

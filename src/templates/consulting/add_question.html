@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    نشر استشارة جديدة
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4 text-primary">نشر استشارة جديدة</h1>
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-pencil-square"></i> تفاصيل الاستشارة</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.category.label_tag }}
+                    {{ form.category }}
+                </div>
+                <div class="mb-3">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                </div>
+                <div class="mb-3">
+                    {{ form.content.label_tag }}
+                    {{ form.content }}
+                </div>
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-send"></i> نشر الاستشارة
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

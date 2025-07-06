@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+
+{% block title %}
+    ملفك الشخصي - Services Pro
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-center">
+                    <img src="{% static 'img/logo.png' %}" alt="Services Pro Logo" width="70" height="70" class="mb-3">
+                    <h3 class="fw-bold">ملفك الشخصي</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-warning w-100 text-white">حفظ التغييرات</button>
+                    </form>
+                    <hr>
+                    <h5 class="fw-bold text-center mt-4">معلومات المستخدم</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>اسم المستخدم:</strong> {{ user.username }}</li>
+                        <li class="list-group-item"><strong>البريد الإلكتروني:</strong> {{ user.email }}</li>
+                        <li class="list-group-item"><strong>رقم الهاتف:</strong> {{ user.profile.phone_number }}</li>
+                        <li class="list-group-item"><strong>الدور:</strong> {{ user.profile.role }}</li>
+                        <li class="list-group-item"><strong>تاريخ الميلاد:</strong> {{ user.profile.date_of_birth }}</li>
+                        <li class="list-group-item"><strong>العنوان:</strong> {{ user.profile.address }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

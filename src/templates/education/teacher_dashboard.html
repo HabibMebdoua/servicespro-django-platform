@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% block title %}
+    التلاميذ المسجلين - {{ course.title }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">التلاميذ المسجلين في الدورة: {{ course.title }}</h1>
+
+    <a href="{% url 'add_lesson' %}" class="btn btn-lg btn-success">إضافة دورة</a>
+
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-warning">
+    <!-- جدول عرض الدورات -->
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-warning">
+            <tr>
+                <th>عنوان الدورة</th>
+                <th>تاريخ الدورة</th>
+                <th>السعر</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.title }}</td>
+                <td>{{ course.course_date }}</td>
+                <td>{{ course.price }} $</td>
+                <td>
+                    <!-- زر تعديل -->
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ course.id }}">تعديل</button>
+                    <!-- زر حذف -->
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ course.id }}">حذف</button>
+                    <a class=" btn btn-success btn-sm" href="{% url 'registered_students' course.id %}">التلاميذ المسجلين</a>
+                </td>
+            </tr>
+
+            <!-- Modal تعديل الكورس -->
+            <div class="modal fade" id="editModal{{ course.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ course.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel{{ course.id }}">تعديل الدورة: {{ course.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'manage_course' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="edit_course_id" value="{{ course.id }}">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">عنوان الدورة</label>
+                                    <input type="text" name="title" id="title" class="form-control" value="{{ course.title }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">وصف الدورة</label>
+                                    <textarea name="description" id="description" class="form-control" rows="4">{{ course.description }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="course_date" class="form-label">تاريخ الدورة</label>
+                                    <input type="date" name="course_date" id="course_date" class="form-control" value="{{ course.course_date }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">السعر</label>
+                                    <input type="number" name="price" id="price" class="form-control" value="{{ course.price }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">صورة الدورة</label>
+                                    <input type="file" name="image" id="image" class="form-control">
+                                    {% if course.image %}
+                                    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    {% endif %}
+                                </div>
+                                <button type="submit" class="btn btn-warning w-100 text-white">حفظ التعديلات</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal حذف الكورس -->
+            <div class="modal fade" id="deleteModal{{ course.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ course.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel{{ course.id }}">حذف الدورة: {{ course.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>هل أنت متأكد من أنك تريد حذف هذه الدورة؟</p>
+                            <form method="post" action="{% url 'manage_course' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_course_id" value="{{ course.id }}">
+                                <button type="submit" class="btn btn-danger w-100">نعم، حذف الدورة</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if courses|length == 0 %}
+    <p class="text-center">لا توجد دورات خاصة بك.</p>
+    {% endif %}
+</div>
+{% endblock %}

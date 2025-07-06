@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+    Services Pro
+{% endblock %}
+
+{% block content %}
+  
+
+    <!-- Welcome Message -->
+    <header class="bg-warning text-center py-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-dark">مرحبًا بك في منصة Services Pro</h1>
+            <p class="lead text-secondary">اكتشف خدماتنا المتنوعة وابدأ رحلتك معنا اليوم!</p>
+        </div>
+    </header>
+
+    <!-- Services Section -->
+    <div class="container my-5">
+        <div class="row text-center">
+            <!-- Freelance -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="{% static 'img/freelance.png' %}" class="card-img-top w-50 d-block mx-auto" alt="Freelance">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Freelance</h5>
+                        <p class="card-text">خدمات العمل الحر بجودة عالية.</p>
+                        <a href="{% url 'available_services' %}" class="btn btn-primary text-white rounded-pill shadow-sm">اقرأ المزيد</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Courses -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="{% static 'img/courses.png' %}" class="card-img-top w-50 d-block mx-auto" alt="Courses">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Courses</h5>
+                        <p class="card-text">دورات تعليمية في مختلف المجالات.</p>
+                        <a href="{% url 'course_list' %}" class="btn btn-success text-white rounded-pill shadow-sm">اقرأ المزيد</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Education -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="{% static 'img/education.png' %}" class="card-img-top w-50 d-block mx-auto" alt="Education">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Education</h5>
+                        <p class="card-text">تعليم وتطوير مهاراتك.</p>
+                        <a href="{% url 'lesson_list' %}" class="btn btn-info text-white rounded-pill shadow-sm">اقرأ المزيد</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Consulting -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="{% static 'img/consulting.png' %}" class="card-img-top w-50 d-block mx-auto" alt="Consulting">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">استشارات</h5>
+                        <p class="card-text">استشارات مهنية وشخصية.</p>
+                        <a href="{% url 'question_list' %}" class="btn btn-secondary text-white rounded-pill shadow-sm">اقرأ المزيد</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Delivery -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="{% static 'img/delivery.png' %}" class="card-img-top w-50 d-block mx-auto" alt="Delivery">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">خدمات التوصيل</h5>
+                        <p class="card-text">توصيل سريع وآمن.</p>
+                        <a href="#" class="btn btn-danger text-white rounded-pill shadow-sm">اقرأ المزيد</a>
+                    </div>
+                </div>
+            </div>
+            <!-- E-commerce -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="{% static 'img/eccomerce.png' %}" class="card-img-top w-50 d-block mx-auto" alt="E-commerce">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">المتاجر الإلكترونية</h5>
+                        <p class="card-text">حلول التجارة الإلكترونية المتكاملة.</p>
+                        <a href="{% url 'store_list' %}" class="btn btn-warning text-white rounded-pill shadow-sm">اقرأ المزيد</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+{% endblock %}

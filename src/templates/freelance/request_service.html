@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% block title %}
+    طلب الخدمة - {{ service.title }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">طلب الخدمة: {{ service.title }}</h1>
+    <div class="row">
+        <!-- تفاصيل الخدمة -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <img src="{{ service.image.url }}" class="card-img-top" alt="{{ service.title }}" style="height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.title }}</h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <p class="text-muted">السعر: {{ service.price }} $</p>
+                    <p class="text-muted">صاحب الخدمة: <span class="fw-bold">{{ service.user.username }}</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- زر تسجيل الطلب -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">إرسال طلب</h5>
+                </div>
+                <div class="card-body text-center">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success w-100">إرسال الطلب</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

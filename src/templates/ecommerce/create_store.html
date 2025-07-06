@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    إنشاء متجر جديد
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">إنشاء متجر جديد</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">اسم المتجر</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="أدخل اسم المتجر" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">وصف المتجر</label>
+            <textarea name="description" id="description" class="form-control" rows="4" placeholder="أدخل وصفاً للمتجر"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="logo" class="form-label">شعار المتجر</label>
+            <input type="file" name="logo" id="logo" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="wilaya" class="form-label">الولاية</label>
+            <select name="wilaya" id="wilaya" class="form-control" required>
+                <option value="">-- اختر ولايتك --</option>
+                {% for code, name in wilayas %}
+                <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">إنشاء المتجر</button>
+    </form>
+</div>
+{% endblock %}
