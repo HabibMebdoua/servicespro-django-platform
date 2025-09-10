@@ -10,14 +10,18 @@ from django.http import JsonResponse
 def store_list(request):
     # جلب الفلتر من الطلب (مثل الولاية)
     wilaya_filter = request.GET.get('wilaya')
+    catigory_filter = request.GET.get('catigory')
     
     if wilaya_filter:
         stores = Store.objects.filter(wilaya=wilaya_filter)
+    elif catigory_filter:
+        stores = Store.objects.filter(catigory=catigory_filter)
     else:
         stores = Store.objects.all()
     
     wilayas = Store.WILAYAS_CHOICES  # جلب قائمة الولايات
-    return render(request, 'ecommerce/store_list.html', {'stores': stores, 'wilayas': wilayas})
+    catigories = Store.CATIGORY_CHOICES
+    return render(request, 'ecommerce/store_list.html', {'stores': stores, 'wilayas': wilayas , 'catigories':catigories})
 
 
 # عرض تفاصيل متجر معين
@@ -201,8 +205,9 @@ def create_store(request):
         description = request.POST.get('description')
         logo = request.FILES.get('logo')
         wilaya = request.POST.get('wilaya')
+        catigory = request.POST.get('catigory')
 
-        if name and wilaya:
+        if name and wilaya and catigory:
             # إنشاء متجر جديد
             Store.objects.create(
                 owner=request.user,
@@ -210,6 +215,7 @@ def create_store(request):
                 description=description,
                 logo=logo,
                 wilaya=wilaya,
+                catigory=catigory
             )
             messages.success(request, 'تم إنشاء المتجر بنجاح.')
             return redirect('seller_dashboard')
@@ -218,7 +224,8 @@ def create_store(request):
 
     # عرض نموذج إنشاء المتجر
     wilayas = Store.WILAYAS_CHOICES
-    return render(request, 'ecommerce/create_store.html', {'wilayas': wilayas})
+    catigories = Store.CATIGORY_CHOICES
+    return render(request, 'ecommerce/create_store.html', {'wilayas': wilayas , 'catigories':catigories})
 
 @login_required
 def create_product(request):

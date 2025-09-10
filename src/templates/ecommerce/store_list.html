@@ -11,7 +11,7 @@
     <!-- فلتر حسب الولاية -->
     <form method="get" class="mb-4">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="wilaya" class="form-label">اختر الولاية</label>
                 <select name="wilaya" id="wilaya" class="form-control">
                     <option value="">-- جميع الولايات --</option>
@@ -20,7 +20,16 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-6 d-flex align-items-end">
+            <div class="col-md-4">
+                <label for="catigory" class="form-label">اختر الفئة</label>
+                <select name="catigory" id="catigory" class="form-control">
+                    <option value="">-- جميع الفئات --</option>
+                    {% for  name,catigory in catigories %}
+                    <option value="{{ catigory  }}">{{ catigory }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary">تطبيق الفلتر</button>
             </div>
         </div>
@@ -35,6 +44,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ store.name }}</h5>
                     <p class="card-text">{{ store.description|truncatewords:10 }}</p>
+                    <p class="card-text">{{ store.catigory }}</p>
                     <a href="{% url 'store_detail' store.id %}" class="btn btn-primary">عرض التفاصيل</a>
                 </div>
             </div>

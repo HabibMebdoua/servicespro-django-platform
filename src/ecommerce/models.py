@@ -64,11 +64,22 @@ class Store(models.Model):
         ("57", "El M'Ghair"),
         ("58", "El Menia"),
     ]
+
+    CATIGORY_CHOICES = [
+        ('ملابس رجالية' , 'ملابس رجالية'),
+        ('ملابس نسائية' , 'ملابس نسائية'),
+        ('ملابس أطفال' , 'ملابس أطفال'),
+        ('هواتف نقالة','هواتف نقالة'),
+        ('إلكترونيات','إلكترونيات'),
+        ('مأكولات','مأكولات'),
+        ('صيدلي','صيدلي'),
+    ]
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     logo = models.ImageField(upload_to='store_logos/', blank=True)
     wilaya = models.CharField(max_length=2, choices=WILAYAS_CHOICES)
+    catigory = models.CharField(choices=CATIGORY_CHOICES , max_length=255)
 
     def __str__(self):
         return self.name

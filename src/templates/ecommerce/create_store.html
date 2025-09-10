@@ -30,6 +30,15 @@
                 {% endfor %}
             </select>
         </div>
+        <div class="mb-3">
+            <label for="catigory" class="form-label">الفئة</label>
+            <select name="catigory" id="catigory" class="form-control" required>
+                <option value="">-- اختر الفئة --</option>
+                {% for code, name in catigories %}
+                <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <button type="submit" class="btn btn-success">إنشاء المتجر</button>
     </form>
 </div>
