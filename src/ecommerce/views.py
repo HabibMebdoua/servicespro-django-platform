@@ -6,6 +6,7 @@ from collections import defaultdict
 from django.core.mail import send_mail
 from accounts.models import CustomUser
 from django.http import JsonResponse
+from epayement.models import Wallet
 # عرض قائمة المتاجر
 def store_list(request):
     # جلب الفلتر من الطلب (مثل الولاية)
@@ -71,6 +72,7 @@ def remove_from_cart(request, item_id):
 def place_order(request):
     cart_items = CartItem.objects.filter(user=request.user)
 
+   
     if not cart_items:
         return redirect('cart_detail')
 
@@ -139,23 +141,69 @@ def seller_dashboard(request):
     return render(request, 'ecommerce/seller_dashboard.html', {'store': store, 'orders': orders, 'products': products, 'delivery_persons': delivery_persons})
 
 
+from django.db import transaction
+
 @login_required
 def update_order_status(request, order_id):
     # جلب الطلب بناءً على معرفه
     order = get_object_or_404(Order, id=order_id, store__owner=request.user)
+
     # تحديث حالة الطلب
     if request.method == 'POST':
         new_status = request.POST.get('status')
         delivery_person_id = request.POST.get('delivery_person')
+
         if new_status:
+            # إذا كانت الحالة الجديدة ليست "pending"، قم بتحويل الأموال
+            if order.status == 'pending' and new_status != 'pending':
+                try:
+                    # الحصول على محفظة المشتري
+                    buyer_wallet = Wallet.objects.filter(user=order.customer).first()
+                    if not buyer_wallet:
+                        messages.error(request, 'لا يمتلك الزبون محفظة. لا يمكن إتمام العملية.')
+                        return redirect('seller_dashboard')
+
+                    # الحصول على محفظة البائع
+                    seller_wallet = Wallet.objects.filter(user=order.store.owner).first()
+                    if not seller_wallet:
+                        messages.error(request, 'لا يمتلك المتجر محفظة. يرجى إنشاء محفظة قبل إتمام العملية.')
+                        return redirect('seller_dashboard')
+
+                    # حساب إجمالي المبلغ لهذا الطلب
+                    total_amount = sum(item.product.price * item.quantity for item in order.orderitem_set.all())
+
+                    # التحقق من كفاية الرصيد
+                    if buyer_wallet.balance < total_amount:
+                        messages.error(request, 'رصيد الزبون غير كافٍ لإتمام العملية.')
+                        return redirect('seller_dashboard')
+
+                    # تحويل الأموال
+                    with transaction.atomic():
+                        buyer_wallet.balance -= total_amount
+                        seller_wallet.balance += total_amount
+                        buyer_wallet.save()
+                        seller_wallet.save()
+
+                        print(f'Seller balance {seller_wallet.balance}')
+                        print(f'buyer balance {buyer_wallet.balance}')
+
+                    messages.success(request, 'تم تحويل الأموال بنجاح.')
+
+                except Exception as e:
+                    messages.error(request, f'حدث خطأ أثناء تحويل الأموال: {str(e)}')
+                    return redirect('seller_dashboard')
+
+            # تحديث حالة الطلب
             order.status = new_status
+
         if delivery_person_id:
             delivery_person = CustomUser.objects.get(id=delivery_person_id)
             order.delivery_person = delivery_person
+
         order.save()
         messages.success(request, 'تم تحديث حالة الطلب بنجاح.')
-    return redirect('seller_dashboard')
 
+    return redirect('seller_dashboard')
 
 @login_required
 def cancel_order_by_seller(request, order_id):
@@ -261,5 +309,4 @@ def delete_product(request, product_id):
     product.delete()
     messages.success(request, 'تم حذف المنتج بنجاح.')
     return redirect('seller_dashboard')
-
 

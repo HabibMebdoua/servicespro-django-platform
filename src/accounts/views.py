@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .forms import CustomUserCreationForm, ProfileForm
-
+from epayement.models import Wallet
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -13,6 +13,11 @@ def register(request):
             Profile.objects.create(user=user)
             # تسجيل الدخول مباشرة بعد التسجيل
             login(request, user)
+
+            ## Create a new wallet
+            Wallet.objects.create(
+                user=user,
+            )
             return redirect('index')  
     else:
         form = CustomUserCreationForm()

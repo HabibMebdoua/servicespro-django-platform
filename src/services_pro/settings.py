@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'courses_market',
     'consulting',
     'ecommerce',
+    'epayement',
 
 
     'bootstrap5',

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+محفظتي
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4"> {{wallet.user.username}} - محفظتي</h1>
+
+    <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-header text-center bg-primary text-white">
+            <h3>رصيد المحفظة</h3>
+        </div>
+        <div class="card-body text-center">
+            <!-- صورة المحفظة -->
+            <img src="{% static 'img/wallet.png' %}" alt="صورة المحفظة" class="mb-3"
+                style="max-height: 150px;">
+
+            <!-- عرض الرصيد -->
+            <h4>الرصيد الحالي:</h4>
+            <p class="display-4 text-success">{{ wallet.balance|floatformat:2 }} دج</p>
+        </div>
+        <div class="card-footer text-center">
+            <a href="" class="btn btn-success">إضافة أموال</a>
+            <a href="" class="btn btn-danger">سحب أموال</a>
+            <a href="{% url 'deposit_funds' %}" class="btn btn-primary">إيداع أموال</a>
+        </div>
+        <div class="card-footer text-center">
+            <h5>رمز محفظتك : {{wallet.code}}</h5>
+        </div>
+    </div>
+
+    <!-- ملاحظة تحت البطاقة -->
+    <p class="text-center text-muted mt-3">
+        <small>ملاحظة: هذه الخدمة تحت التجربة، قد تواجه بعض المشاكل أثناء الاستخدام.</small>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+إيداع الأموال
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">إيداع الأموال</h1>
+    <div class="card mx-auto" style="max-width: 500px;">
+        <!-- صورة أعلى البطاقة -->
+        <img src="{% static 'img/wallet.png' %}" class="card-img-top d-block mx-auto" alt="Deposit Banner"
+            style="max-height: 200px; max-width: 180px;">
+        <div class="card-body">
+            <form method="POST" action="{% url 'deposit_funds' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="wallet_code" class="form-label">رمز المحفظة</label>
+                    <input type="text" class="form-control" id="wallet_code" name="wallet_code"
+                        placeholder="أدخل رمز المحفظة" required>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">المبلغ المراد إيداعه</label>
+                    <input type="number" class="form-control" id="amount" name="amount" placeholder="أدخل المبلغ"
+                        min="1" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">إيداع</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

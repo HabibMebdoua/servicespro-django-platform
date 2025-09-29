@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    تفاصيل السلة
+تفاصيل السلة
 {% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <h1 class="text-center mb-4">السلة الخاصة بك</h1>
-    <table class="table table-bordered">
-        <thead>
+
+    {% if cart_items %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
             <tr>
                 <th>المنتج</th>
                 <th>السعر</th>
@@ -18,22 +20,35 @@
             </tr>
         </thead>
         <tbody>
+            {% with 0 as total %}
             {% for item in cart_items %}
             <tr>
                 <td>{{ item.product.name }}</td>
-                <td>{{ item.product.price }} $</td>
+                <td>{{ item.product.price|floatformat:2 }} $</td>
                 <td>{{ item.quantity }}</td>
-                <td>{{ item.product.price|floatformat:2|add:item.quantity }} $</td>
+                <td>
+                    {% with item.product.price|floatformat:2 as item_price %}
+                    {% with item_price|floatformat:2 as item_total %}
+                    {{ item_total }} $
+                    {% endwith %}
+                    {% endwith %}
+                </td>
                 <td>
                     <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">إزالة</a>
                 </td>
             </tr>
             {% endfor %}
+            {% endwith %}
         </tbody>
     </table>
-    <div class="text-end">
-        <h4>الإجمالي: {{ total }} $</h4>
+    <div class="text-end mt-3">
+        <h4>الإجمالي: {{ total|floatformat:2 }} $</h4>
         <a href="{% url 'place_order' %}" class="btn btn-success">إتمام الطلب</a>
     </div>
+    {% else %}
+    <div class="alert alert-warning text-center" role="alert">
+        السلة فارغة. أضف منتجات إلى السلة للمتابعة.
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
