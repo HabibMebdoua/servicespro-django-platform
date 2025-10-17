@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+قائمة عمال التوصيل
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">قائمة عمال التوصيل</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>اسم المستخدم</th>
+                <th>الولاية</th>
+                <th>نوع المركبة</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for worker in workers %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ worker.user.username }}</td>
+                <td>{{ worker.wilaya }}</td>
+                <td>{{ worker.vehicle_type|default:"غير محدد" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">لا يوجد عمال توصيل.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

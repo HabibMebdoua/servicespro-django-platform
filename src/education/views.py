@@ -80,12 +80,12 @@ def register_course(request, course_id):
     existing_registration = CourseRegistration.objects.filter(student=request.user, course=course).exists()
     if existing_registration:
         messages.error(request, "لقد قمت بالتسجيل في هذه الدورة مسبقًا.")
-        return redirect('course_detail', course_id=course_id)
+        return redirect('lesson_detail', course_id=course_id)
 
     # إنشاء تسجيل جديد بحالة "غير مقبول"
     registration = CourseRegistration.objects.create(student=request.user, course=course, is_accepted=False)
     messages.success(request, "تم التسجيل في الدورة بنجاح. يرجى انتظار قبول المعلم.")
-    return redirect('course_detail', course_id=course_id)
+    return redirect('lesson_detail', course_id=course_id)
 
 @login_required
 def registered_students(request, course_id):

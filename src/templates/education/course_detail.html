@@ -20,7 +20,7 @@
                     
                     <div class="text-center mt-4">
                         {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'register_course' course.id %}">
+                            <form method="post" action="{% url 'registerincourse' course.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-warning text-white rounded-pill shadow-sm">سجل الآن</button>
                             </form>
