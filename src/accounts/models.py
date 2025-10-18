@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
         ('delivery', 'عامل توصيل'),
         ('courses_instructor', 'إستاذ دورات'),
         ('seller', 'بائع'),
+        ('consulter', 'مقدم إستشارات'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='member')
 
