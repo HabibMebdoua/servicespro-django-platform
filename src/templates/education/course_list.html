@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     قائمة الدورات - Services Pro
 {% endblock %}
@@ -34,7 +34,11 @@
         {% for course in courses %}
         <div class="col-md-4 mb-4">
             <div class="card shadow">
-                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 200px; object-fit: cover;">
+                {% if course.image %} 
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                {% else %}
+                <img src="{% static 'img/courses.png' %}" class="card-img-top" alt="صورة افتراضية للدورة" height="200px" width="150px">
+                {% endif %}
                 <div class="card-body text-center">
                     <h5 class="card-title fw-bold">{{ course.title }}</h5>
                     <p class="card-text text-muted">{{ course.description|truncatewords:15 }}</p>
