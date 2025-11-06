@@ -1,17 +1,37 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    لوحة تحكم المتجر - {{ store.name }}
+{% if selected_store %}لوحة تحكم المتجر - {{ selected_store.name }}{% else %}لوحة تحكم البائع{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">لوحة تحكم المتجر - {{ store.name }}</h1>
+    <h1 class="text-center mb-4">
+        {% if selected_store %}
+        لوحة تحكم المتجر - {{ selected_store.name }}
+        {% else %}
+        لوحة تحكم البائع
+        {% endif %}
+    </h1>
 
-    <!-- زر إنشاء منتج جديد -->
-    <a href="{% url 'create_product' %}" class="btn btn-primary mb-4">إنشاء منتج جديد</a>
+    <!-- اختيار المتجر -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <form method="get" class="d-flex align-items-center">
+            <label for="store_id" class="me-2 mb-0">اختر متجراً:</label>
+            <select id="store_id" name="store_id" class="form-select me-2" onchange="this.form.submit()">
+                <option value="">جميع المتاجر</option>
+                {% for s in stores %}
+                <option value="{{ s.id }}" {% if selected_store and selected_store.id == s.id %}selected{% endif %}>
+                    {{ s.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <noscript><button class="btn btn-sm btn-primary" type="submit">عرض</button></noscript>
+        </form>
+        <a href="{% url 'create_product' %}" class="btn btn-primary">إنشاء منتج جديد</a>
+    </div>
 
-    <!-- عرض المنتجات الخاصة بالمتجر -->
+    <!-- عرض المنتجات -->
     <h2 class="mb-4">المنتجات</h2>
     <table class="table table-bordered">
         <thead>
@@ -40,7 +60,8 @@
         </tbody>
     </table>
 
-    <!-- عرض الطلبات الخاصة بالمتجر -->
+    <!-- عرض الطلبات -->
+    <h2 class="mb-4">الطلبات</h2>
     <div class="row">
         {% for order in orders %}
         <div class="col-12 mb-4">
@@ -54,6 +75,7 @@
                             <tr>
                                 <th>المنتج</th>
                                 <th>الكمية</th>
+                                <th>السعر للوحدة</th>
                                 <th>الإجمالي</th>
                             </tr>
                         </thead>
@@ -61,28 +83,32 @@
                             {% for item in order.orderitem_set.all %}
                             <tr>
                                 <td>{{ item.product.name }}</td>
-                                <td>{{ item.quantity }}</td>             
-                                <td>{{ item.product.price|floatformat:2|add:item.quantity }} $</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.product.price|floatformat:2 }} $</td>
+                                
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+
                     <p><strong>الزبون:</strong> {{ order.customer.username }}</p>
                     <p><strong>رقم الهاتف:</strong> {{ order.customer.phone_number }}</p>
                     <p><strong>الحالة الحالية:</strong> {{ order.get_status_display }}</p>
+
                     <form method="post" action="{% url 'update_order_status' order.id %}">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="status" class="form-label">تحديث الحالة</label>
-                            <select name="status" id="status" class="form-control">
+                            <label for="status_{{ order.id }}" class="form-label">تحديث الحالة</label>
+                            <select name="status" id="status_{{ order.id }}" class="form-control">
                                 <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>قيد المعالجة</option>
                                 <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>قيد التوصيل</option>
                                 <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>تم التوصيل</option>
                             </select>
                         </div>
+
                         <div class="mb-3">
-                            <label for="delivery_person" class="form-label">اختيار عامل التوصيل</label>
-                            <select name="delivery_person" id="delivery_person" class="form-control">
+                            <label for="delivery_person_{{ order.id }}" class="form-label">اختيار عامل التوصيل</label>
+                            <select name="delivery_person" id="delivery_person_{{ order.id }}" class="form-control">
                                 <option value="">-- اختر عامل التوصيل --</option>
                                 {% for delivery_person in delivery_persons %}
                                 <option value="{{ delivery_person.id }}" {% if order.delivery_person == delivery_person %}selected{% endif %}>
@@ -91,8 +117,10 @@
                                 {% endfor %}
                             </select>
                         </div>
+
                         <button type="submit" class="btn btn-success">تحديث الطلب</button>
                     </form>
+
                     <a href="{% url 'cancel_order_by_seller' order.id %}" class="btn btn-danger mt-3">إلغاء الطلب</a>
                 </div>
             </div>

@@ -75,7 +75,7 @@ class Store(models.Model):
         ('صيدلي','صيدلي'),
         ('إكسسوارات', 'إكسسوارات'),
     ]
-    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='stores')
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     logo = models.ImageField(upload_to='store_logos/', blank=True)

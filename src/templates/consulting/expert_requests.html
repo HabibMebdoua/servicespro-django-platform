@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}طلبات الاشتراك{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">طلبات الاشتراك في استشاراتي</h2>
+
+    {% if messages %}
+    {% for m in messages %}
+    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>الاستشارة</th>
+                <th>العميل</th>
+                <th>الحالة</th>
+                <th>تاريخ</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in requests %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'question_detail' r.question.id %}">{{ r.question.title }}</a></td>
+                <td>{{ r.client.username }}<br><small>{{ r.client.email }}</small></td>
+                <td>{{ r.get_status_display|default:r.status }}</td>
+                <td>{{ r.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    {% if r.status == 'pending' %}
+                    <form method="post" action="{% url 'handle_request' r.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button name="action" value="accept" class="btn btn-sm btn-success">قبول</button>
+                        <button name="action" value="reject" class="btn btn-sm btn-danger">رفض</button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">{{ r.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">لا توجد طلبات.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -7,6 +7,8 @@ from django.core.mail import send_mail
 from accounts.models import CustomUser
 from django.http import JsonResponse
 from epayement.models import Wallet
+from django.db import transaction
+
 # عرض قائمة المتاجر
 def store_list(request):
     # جلب الفلتر من الطلب (مثل الولاية)
@@ -130,18 +132,38 @@ def cancel_order(request, order_id):
 ##Seller part
 @login_required
 def seller_dashboard(request):
-    # جلب المتجر الخاص بالمستخدم الحالي
-    store = get_object_or_404(Store, owner=request.user)
-    # جلب الطلبات الخاصة بالمتجر
-    orders = Order.objects.filter(store=store).order_by('-created_at')
-    # جلب المنتجات الخاصة بالمتجر
-    products = store.products.all()
-    # جلب عمال التوصيل الذين ينتمون لنفس الولاية
-    delivery_persons = CustomUser.objects.filter(role='delivery', deliveryperson__wilaya=store.wilaya)
-    return render(request, 'ecommerce/seller_dashboard.html', {'store': store, 'orders': orders, 'products': products, 'delivery_persons': delivery_persons})
+    # جلب كل المتاجر الخاصة بالمستخدم الحالي
+    stores = Store.objects.filter(owner=request.user)
 
+    if not stores.exists():
+        messages.info(request, 'لم تقم بإنشاء أي متجر بعد.')
+        return redirect('create_store')
 
-from django.db import transaction
+    # السماح باختيار متجر عبر query param ?store_id=..
+    selected_store_id = request.GET.get('store_id')
+    selected_store = None
+
+    if selected_store_id:
+        selected_store = get_object_or_404(Store, id=selected_store_id, owner=request.user)
+        orders = Order.objects.filter(store=selected_store).order_by('-created_at')
+        products = selected_store.products.all()
+        delivery_persons = CustomUser.objects.filter(role='delivery', deliveryperson__wilaya=selected_store.wilaya)
+    else:
+        # عرض جميع الطلبات والمنتجات للمتاجر المملوكة للبائع
+        orders = Order.objects.filter(store__in=stores).order_by('-created_at')
+        products = Product.objects.filter(store__in=stores)
+        wilayas = stores.values_list('wilaya', flat=True).distinct()
+        delivery_persons = CustomUser.objects.filter(role='delivery', deliveryperson__wilaya__in=wilayas)
+
+    context = {
+        'stores': stores,
+        'selected_store': selected_store,
+        'orders': orders,
+        'products': products,
+        'delivery_persons': delivery_persons,
+    }
+    return render(request, 'ecommerce/seller_dashboard.html', context)
+
 
 @login_required
 def update_order_status(request, order_id):
@@ -244,9 +266,7 @@ def delivery_person_setup(request):
 @login_required
 def create_store(request):
     # التحقق من أن المستخدم ليس لديه متجر بالفعل
-    if hasattr(request.user, 'store'):
-        messages.error(request, 'لديك بالفعل متجر.')
-        return redirect('seller_dashboard')
+    # الآن يسمح بإنشاء أكثر من متجر للمستخدم
 
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -277,14 +297,26 @@ def create_store(request):
 
 @login_required
 def create_product(request):
-    # جلب المتجر الخاص بالمستخدم الحالي
-    store = get_object_or_404(Store, owner=request.user)
+    # يسمح باختيار المتجر المنشأ له المنتج إذا كان للبائع عدة متاجر
+    stores = Store.objects.filter(owner=request.user)
+    store = None
 
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description')
         price = request.POST.get('price')
         image = request.FILES.get('image')
+        store_id = request.POST.get('store_id')
+
+        # تحديد المتجر: إما من الحقل أو إذا كان للبائع متجر واحد نستخدمه تلقائيًا
+        if store_id:
+            store = get_object_or_404(Store, id=store_id, owner=request.user)
+        else:
+            if stores.count() == 1:
+                store = stores.first()
+            else:
+                messages.error(request, 'يرجى اختيار المتجر الذي تريد إضافة المنتج إليه.')
+                return render(request, 'ecommerce/create_product.html', {'stores': stores})
 
         if name and price and image:
             Product.objects.create(
@@ -299,8 +331,7 @@ def create_product(request):
         else:
             messages.error(request, 'يرجى ملء جميع الحقول المطلوبة.')
 
-    return render(request, 'ecommerce/create_product.html')
-
+    return render(request, 'ecommerce/create_product.html', {'stores': stores})
 
 @login_required
 def delete_product(request, product_id):

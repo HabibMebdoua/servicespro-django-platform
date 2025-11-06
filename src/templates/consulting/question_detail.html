@@ -1,54 +1,75 @@
 {% extends 'base.html' %}
 {% load bootstrap5 %}
-{% block title %}
-    تفاصيل الاستشارة
-{% endblock %}
+{% block title %}تفاصيل الاستشارة{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <!-- تفاصيل الاستشارة -->
-    <div class="card mb-4">
-        <div class="card-header bg-light">
-            <h2 class="mb-0">{{ question.title }}</h2>
-        </div>
-        <div class="card-body">
-            <p class="text-muted mb-2">تم النشر بواسطة: <span class="fw-bold">{{ question.user.username }}</span> في {{ question.created_at|date:"d M Y" }}</p>
-            <p class="mb-0">{{ question.content }}</p>
-        </div>
-    </div>
+    {% if messages %}
+    {% for m in messages %}
+    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+    {% endfor %}
+    {% endif %}
 
-    <!-- الأجوبة -->
     <div class="card mb-4">
-        <div class="card-header bg-light">
-            <h3 class="mb-0">الأجوبة</h3>
+        <div class="card-header">
+            <h3 class="mb-0">{{ question.title }}</h3>
+            <small class="text-muted">المجال:
+                {% if question.category %}
+                {{ question.category.name }}
+                {% else %}
+                -
+                {% endif %}
+                — بواسطة {{ question.user.username }}</small>
         </div>
         <div class="card-body">
-            {% if answers %}
-            <ul class="list-group">
-                {% for answer in answers %}
-                <li class="list-group-item">
-                    <p class="mb-1">{{ answer.content }}</p>
-                    <p class="text-muted mb-0">تم النشر بواسطة: <span class="fw-bold">{{ answer.expert.username }}</span> في {{ answer.created_at|date:"d M Y" }}</p>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p class="text-center text-muted">لا توجد أجوبة لهذه الاستشارة.</p>
+            <p>{{ question.content }}</p>
+            {% if question.link %}
+            <p><strong>رابط الاستشارة:</strong> <a href="{{ question.link }}" target="_blank">{{ question.link }}</a>
+            </p>
             {% endif %}
         </div>
     </div>
 
-    <!-- نشر جواب -->
-    <div class="card">
-        <div class="card-header bg-light">
-            <h3 class="mb-0">نشر جواب</h3>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">الأجوبة</h5>
         </div>
         <div class="card-body">
-            <form method="post">
+            {% if question.answer_set.all %}
+            {% for ans in question.answer_set.all %}
+            <div class="mb-3">
+                <p class="mb-1"><strong>{{ ans.expert.username }}</strong> <small class="text-muted">{{
+                        ans.created_at|date:"Y-m-d H:i" }}</small></p>
+                <p>{{ ans.content }}</p>
+                <hr>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-muted">لا توجد أجوبة حتى الآن.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">طلب الاشتراك</h5>
+        </div>
+        <div class="card-body">
+            {% if user.is_authenticated %}
+            {% if existing_subscription %}
+            <div class="alert alert-success">لديك اشتراك نشط لهذه الاستشارة.</div>
+            {% elif existing_request and existing_request.status == 'pending' %}
+            <div class="alert alert-info">طلبك قيد المراجعة.</div>
+            {% else %}
+            <form method="post" action="{% url 'request_subscription' question.id %}">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary w-100">نشر الجواب</button>
+                <p>لطلب الوصول إلى رابط الاستشارة والمحتوى الكامل، اضغط على الزر أدناه.</p>
+                <button type="submit" class="btn btn-primary">طلب اشتراك</button>
             </form>
+            {% endif %}
+            {% else %}
+            <p>يرجى <a href="{% url 'login' %}">تسجيل الدخول</a> لطلب اشتراك.</p>
+            {% endif %}
         </div>
     </div>
 </div>

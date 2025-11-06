@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    إنشاء متجر جديد
+إنشاء متجر جديد
 {% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <h1 class="text-center mb-4">إنشاء متجر جديد</h1>
+    {% if messages %}
+    {% for m in messages %}
+    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+    {% endfor %}
+    {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">
@@ -15,7 +20,8 @@
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">وصف المتجر</label>
-            <textarea name="description" id="description" class="form-control" rows="4" placeholder="أدخل وصفاً للمتجر"></textarea>
+            <textarea name="description" id="description" class="form-control" rows="4"
+                placeholder="أدخل وصفاً للمتجر"></textarea>
         </div>
         <div class="mb-3">
             <label for="logo" class="form-label">شعار المتجر</label>
