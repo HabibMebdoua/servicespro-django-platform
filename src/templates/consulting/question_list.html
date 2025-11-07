@@ -25,10 +25,7 @@
                         {% endif %}
                     </p>
                     <p class="card-text">{{ q.content|truncatewords:25 }}</p>
-                    {% if q.link %}
-                    <p><a href="{{ q.link }}" target="_blank" class="btn btn-outline-primary btn-sm">عرض رابط
-                            الاستشارة</a></p>
-                    {% endif %}
+                   
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <small class="text-muted">بواسطة {{ q.user.username }} — {{ q.created_at|date:"Y-m-d" }}</small>

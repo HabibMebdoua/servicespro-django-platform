@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load bootstrap5 %}
+{%  load static %}
 {% block title %}
-    طلب الخدمة - {{ service.title }}
+طلب الخدمة - {{ service.title }}
 {% endblock %}
 
 {% block content %}
@@ -11,7 +12,14 @@
         <!-- تفاصيل الخدمة -->
         <div class="col-md-6">
             <div class="card shadow">
-                <img src="{{ service.image.url }}" class="card-img-top" alt="{{ service.title }}" style="height: 300px; object-fit: cover;">
+                {% if service.image %}
+                <img src="{{ service.image.url }}" class="card-img-top" alt="{{ service.title }}"
+                    style="height: 300px; object-fit: cover;">
+                {% else %}
+                <img src="{% static 'images/default-course.jpg' %}" class="card-img-top" alt="No image"
+                    style="height: 300px; object-fit: cover;">
+                {% endif %}
+
                 <div class="card-body">
                     <h5 class="card-title">{{ service.title }}</h5>
                     <p class="card-text">{{ service.description }}</p>

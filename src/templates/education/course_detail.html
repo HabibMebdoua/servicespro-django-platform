@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
-    تفاصيل الدورة - {{ course.title }}
+تفاصيل الدورة - {{ course.title }}
 {% endblock %}
 
 {% block content %}
@@ -9,28 +9,34 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow">
-                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 300px; object-fit: cover;">
-                <div class="card-body">
-                    <h1 class="fw-bold text-center">{{ course.title }}</h1>
-                    <p class="text-muted text-center">{{ course.course_date }}</p>
-                    <p class="text-muted text-center">السعر: <span class="fw-bold">{{ course.price }} $</span></p>
-                    <hr>
-                    <h5 class="fw-bold">وصف الدورة:</h5>
-                    <p>{{ course.description }}</p>
-                    
-                    <div class="text-center mt-4">
-                        {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'registerincourse' course.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-warning text-white rounded-pill shadow-sm">سجل الآن</button>
-                            </form>
-                        {% else %}
-                            <p class="text-center">يرجى تسجيل الدخول للتسجيل في الدورة.</p>
-                        {% endif %}
-                    </div>
+                {% if course.image %}
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}"
+                    style="height: 300px; object-fit: cover;">
+                {% else %}
+                <img src="{% static 'images/default-course.jpg' %}" class="card-img-top" alt="No image"
+                    style="height: 300px; object-fit: cover;">
+                {% endif %}
+                <h1 class="fw-bold text-center">{{ course.title }}</h1>
+                <p class="text-muted text-center">{{ course.course_date }}</p>
+                <p class="text-muted text-center">السعر: <span class="fw-bold">{{ course.price }} $</span></p>
+                <hr>
+                <h5 class="fw-bold">وصف الدورة:</h5>
+                <p>{{ course.description }}</p>
+
+                <div class="text-center mt-4">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'registerincourse' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning text-white rounded-pill shadow-sm">سجل
+                            الآن</button>
+                    </form>
+                    {% else %}
+                    <p class="text-center">يرجى تسجيل الدخول للتسجيل في الدورة.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}

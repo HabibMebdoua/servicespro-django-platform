@@ -71,9 +71,10 @@ class Store(models.Model):
         ('ملابس أطفال' , 'ملابس أطفال'),
         ('هواتف نقالة','هواتف نقالة'),
         ('إلكترونيات','إلكترونيات'),
-        ('مأكولات','مأكولات'),
+        ('مطعم رقمي','مطعم رقمي'),
         ('صيدلي','صيدلي'),
         ('إكسسوارات', 'إكسسوارات'),
+        ('سوبيرات' , 'سوبيرات')
     ]
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='stores')
     name = models.CharField(max_length=255)

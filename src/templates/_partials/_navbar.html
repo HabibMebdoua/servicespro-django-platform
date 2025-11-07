@@ -85,6 +85,11 @@
                         <i class="fas fa-user"></i> لوحة العميل
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{% url 'freelance_client_dashboard' %}">
+                        <i class="fas fa-user"></i> لوحة عميل العمل الحر
+                    </a>
+                </li>
                 {% if user.cartitem_set.exists %}
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{% url 'cart_detail' %}">
