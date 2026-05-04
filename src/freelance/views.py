@@ -3,7 +3,7 @@ from django.contrib import messages  # استيراد مكتبة الرسائل
 from django.contrib.auth.decorators import login_required
 from .models import Service, Order
 from .forms import OrderForm, ServiceForm
-from django.core.mail import send_mail  # استيراد مكتبة إرسال البريد الإلكتروني
+from accounts.email_utils import send_professional_email
 
 def available_services(request):
     # جلب جميع الخدمات المتاحة
@@ -58,12 +58,23 @@ def freelancer_dashboard(request):
             messages.success(request, f"تم قبول الطلب رقم {order.id}.")
 
             # إرسال بريد إلكتروني إلى العميل
-            send_mail(
+            message_text = f"""مرحباً {order.client.username},
+
+تم قبول طلبك للخدمة: {order.service.title}
+
+بيانات الخدمة:
+- عنوان الخدمة: {order.service.title}
+- مقدم الخدمة: {order.service.user.username}
+- وصف الخدمة: {order.service.description}
+
+سيتواصل معك مقدم الخدمة قريباً لتفاصيل أكثر.
+
+شكراً لاستخدامك منصتنا!"""
+            
+            send_professional_email(
                 subject=f"تم قبول طلبك للخدمة: {order.service.title}",
-                message=f"مرحبًا {order.client.username},\n\nتم قبول طلبك للخدمة: {order.service.title}.\n\nشكرًا لاستخدامك منصتنا!",
-                from_email='no-reply@services_pro.com',
-                recipient_list=[order.client.email],
-                fail_silently=False,
+                recipient_email=order.client.email,
+                message_text=message_text
             )
         elif action == 'reject':
             order.status = 'rejected'

@@ -24,12 +24,12 @@
             {% for item in cart_items %}
             <tr>
                 <td>{{ item.product.name }}</td>
-                <td>{{ item.product.price|floatformat:2 }} $</td>
+                <td>{{ item.product.price|floatformat:2 }} DA</td>
                 <td>{{ item.quantity }}</td>
                 <td>
                     {% with item.product.price|floatformat:2 as item_price %}
                     {% with item_price|floatformat:2 as item_total %}
-                    {{ item_total }} $
+                    {{ item_total }} DA
                     {% endwith %}
                     {% endwith %}
                 </td>
@@ -42,7 +42,7 @@
         </tbody>
     </table>
     <div class="text-end mt-3">
-        <h4>الإجمالي: {{ total|floatformat:2 }} $</h4>
+        <h4>الإجمالي: {{ total|floatformat:2 }} DA</h4>
         <a href="{% url 'place_order' %}" class="btn btn-success">إتمام الطلب</a>
     </div>
     {% else %}

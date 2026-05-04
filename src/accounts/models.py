@@ -6,6 +6,8 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     ROLE_CHOICES = (
         ('member', 'مستخدم'),
+        ('student', 'تلميذ'),
+        ('university_student', 'طالب جامعي'),
         ('freelancer', 'freelancer'),
         ('teacher', 'مدرس'),
         ('delivery', 'عامل توصيل'),

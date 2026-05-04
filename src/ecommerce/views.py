@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Store, Product,CartItem, OrderItem, Order, DeliveryPerson
 from collections import defaultdict
-from django.core.mail import send_mail
 from accounts.models import CustomUser
+from accounts.email_utils import send_professional_email
 from django.http import JsonResponse
 from epayement.models import Wallet
 from django.db import transaction
@@ -92,12 +92,10 @@ def place_order(request):
             )
         
         # إرسال بريد إلكتروني للبائع
-        send_mail(
+        send_professional_email(
             subject='طلب جديد في متجرك',
-            message=f'مرحباً {store.owner.username}, لديك طلب جديد في متجرك "{store.name}". يرجى تسجيل الدخول إلى لوحة التحكم لمراجعة الطلب.',
-            from_email='noreply@servicespro.com',
-            recipient_list=[store.owner.email],
-            fail_silently=False,
+            recipient_email=store.owner.email,
+            message_text=f'مرحباً {store.owner.username},\n\nلديك طلب جديد في متجرك "{store.name}".\n\nيرجى تسجيل الدخول إلى لوحة التحكم لمراجعة الطلب.\n\nبيانات الطلب:\n- رقم الطلب: {order.id}\n- تاريخ الطلب: {order.created_at}\n\nشكراً لاستخدامك منصتنا!'
         )
 
     cart_items.delete()  # إفراغ السلة بعد الطلب
@@ -303,7 +301,7 @@ def create_product(request):
 
     if request.method == 'POST':
         name = request.POST.get('name')
-        description = request.POST.get('description')
+        # description = request.POST.get('description')
         price = request.POST.get('price')
         image = request.FILES.get('image')
         store_id = request.POST.get('store_id')
@@ -322,7 +320,7 @@ def create_product(request):
             Product.objects.create(
                 store=store,
                 name=name,
-                description=description,
+                # description=description,
                 price=price,
                 image=image,
             )

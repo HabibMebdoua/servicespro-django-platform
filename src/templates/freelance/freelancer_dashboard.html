@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    لوحة التحكم - الفريلانسر
+لوحة التحكم - الفريلانسر
 {% endblock %}
 
 {% block content %}
@@ -76,25 +76,29 @@
             {% for service in services %}
             <tr>
                 <td>{{ service.title }}</td>
-                <td>{{ service.price }} $</td>
+                <td>{{ service.price }} DA</td>
                 <td>{{ service.is_available|yesno:"متاحة,غير متاحة" }}</td>
                 <td>
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ service.id }}">تعديل</button>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#editModal{{ service.id }}">تعديل</button>
                     <form method="post" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="service_id" value="{{ service.id }}">
                         <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">حذف</button>
-                        <button type="submit" name="action" value="toggle_availability" class="btn btn-info btn-sm">تغيير الحالة</button>
+                        <button type="submit" name="action" value="toggle_availability"
+                            class="btn btn-info btn-sm">تغيير الحالة</button>
                     </form>
                 </td>
             </tr>
 
             <!-- Modal تعديل الخدمة -->
-            <div class="modal fade" id="editModal{{ service.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ service.id }}" aria-hidden="true">
+            <div class="modal fade" id="editModal{{ service.id }}" tabindex="-1"
+                aria-labelledby="editModalLabel{{ service.id }}" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editModalLabel{{ service.id }}">تعديل الخدمة: {{ service.title }}</h5>
+                            <h5 class="modal-title" id="editModalLabel{{ service.id }}">تعديل الخدمة: {{ service.title
+                                }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -103,24 +107,29 @@
                                 <input type="hidden" name="service_id" value="{{ service.id }}">
                                 <div class="mb-3">
                                     <label for="title{{ service.id }}" class="form-label">عنوان الخدمة</label>
-                                    <input type="text" name="title" id="title{{ service.id }}" class="form-control" value="{{ service.title }}">
+                                    <input type="text" name="title" id="title{{ service.id }}" class="form-control"
+                                        value="{{ service.title }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="description{{ service.id }}" class="form-label">وصف الخدمة</label>
-                                    <textarea name="description" id="description{{ service.id }}" class="form-control" rows="4">{{ service.description }}</textarea>
+                                    <textarea name="description" id="description{{ service.id }}" class="form-control"
+                                        rows="4">{{ service.description }}</textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="price{{ service.id }}" class="form-label">السعر</label>
-                                    <input type="number" name="price" id="price{{ service.id }}" class="form-control" value="{{ service.price }}">
+                                    <input type="number" name="price" id="price{{ service.id }}" class="form-control"
+                                        value="{{ service.price }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="image{{ service.id }}" class="form-label">صورة الخدمة</label>
                                     <input type="file" name="image" id="image{{ service.id }}" class="form-control">
                                     {% if service.image %}
-                                    <img src="{{ service.image.url }}" alt="{{ service.title }}" class="img-thumbnail mt-2" style="max-height: 150px;">
+                                    <img src="{{ service.image.url }}" alt="{{ service.title }}"
+                                        class="img-thumbnail mt-2" style="max-height: 150px;">
                                     {% endif %}
                                 </div>
-                                <button type="submit" name="action" value="edit" class="btn btn-warning w-100">حفظ التعديلات</button>
+                                <button type="submit" name="action" value="edit" class="btn btn-warning w-100">حفظ
+                                    التعديلات</button>
                             </form>
                         </div>
                     </div>

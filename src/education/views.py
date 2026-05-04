@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.mail import send_mail
 from .models import Course, CourseRegistration
 from .forms import AddCourseForm
+from accounts.email_utils import send_professional_email
 
 def course_list(request):
     # الحصول على جميع الدورات
@@ -109,17 +109,24 @@ def accept_student(request, registration_id):
     # إرسال بريد إلكتروني إلى التلميذ
     course_link = registration.course.link if registration.course.link else "#"
     subject = f"تم قبولك في الدورة: {registration.course.title}"
-    message = f"""
-    مرحبًا {registration.student.username},
+    message_text = f"""مرحباً {registration.student.username},
 
-    لقد تم قبولك في الدورة: {registration.course.title}.
-    يمكنك الوصول إلى الدورة عبر الرابط التالي:
-    {course_link}
+تم قبول طلبك في الدورة: {registration.course.title}
 
-    شكرًا لاختيارك خدماتنا.
-    """
-    recipient_email = registration.student.email
-    send_mail(subject, message, 'admin@servicespro.com', [recipient_email])
+بيانات الدورة:
+- عنوان الدورة: {registration.course.title}
+- المدرس: {registration.course.teacher.username}
+
+يمكنك الوصول إلى الدورة عبر الرابط التالي:
+{course_link}
+
+شكراً لاختيارك خدماتنا."""
+    
+    send_professional_email(
+        subject=subject,
+        recipient_email=registration.student.email,
+        message_text=message_text
+    )
 
     # عرض رسالة نجاح
     messages.success(request, f"تم قبول التلميذ {registration.student.username} في الدورة وتم إرسال بريد إلكتروني إليه.")

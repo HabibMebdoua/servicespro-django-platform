@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    قائمة الدورات - Courses Market
+قائمة الدورات - Courses Market
 {% endblock %}
 
 {% block content %}
@@ -12,13 +12,16 @@
     <form method="get" class="mb-4">
         <div class="row">
             <div class="col-md-4">
-                <input type="text" name="title" class="form-control" placeholder="ابحث عن دورة..." value="{{ request.GET.title }}">
+                <input type="text" name="title" class="form-control" placeholder="ابحث عن دورة..."
+                    value="{{ request.GET.title }}">
             </div>
             <div class="col-md-3">
-                <input type="number" name="min_price" class="form-control" placeholder="الحد الأدنى للسعر" value="{{ request.GET.min_price }}">
+                <input type="number" name="min_price" class="form-control" placeholder="الحد الأدنى للسعر"
+                    value="{{ request.GET.min_price }}">
             </div>
             <div class="col-md-3">
-                <input type="number" name="max_price" class="form-control" placeholder="الحد الأقصى للسعر" value="{{ request.GET.max_price }}">
+                <input type="number" name="max_price" class="form-control" placeholder="الحد الأقصى للسعر"
+                    value="{{ request.GET.max_price }}">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-warning w-100 text-white">فلتر</button>
@@ -31,11 +34,13 @@
         {% for course in courses %}
         <div class="col-md-4 mb-4">
             <div class="card shadow">
-                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}"
+                    style="height: 200px; object-fit: cover;">
                 <div class="card-body">
-                    <a href="{% url 'course_detail' course.id %}" class="card-title h5 text-decoration-none text-primary fw-bold">{{ course.title }}</a>
+                    <a href="{% url 'course_detail' course.id %}"
+                        class="card-title h5 text-decoration-none text-primary fw-bold">{{ course.title }}</a>
                     <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                    <p class="text-muted">السعر: {{ course.price }} $</p>
+                    <p class="text-muted">السعر: {{ course.price }} DA</p>
                 </div>
             </div>
         </div>

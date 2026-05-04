@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load bootstrap5 %}
-{%  load static %}
+{% load static %}
 {% block title %}
 طلب الخدمة - {{ service.title }}
 {% endblock %}
@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ service.title }}</h5>
                     <p class="card-text">{{ service.description }}</p>
-                    <p class="text-muted">السعر: {{ service.price }} $</p>
+                    <p class="text-muted">السعر: {{ service.price }} DA</p>
                     <p class="text-muted">صاحب الخدمة: <span class="fw-bold">{{ service.user.username }}</span></p>
                 </div>
             </div>

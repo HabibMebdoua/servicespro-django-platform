@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.mail import send_mail
 from django.conf import settings
 from django.db import transaction
 from .models import Category, Question, Answer, SubscriptionRequest, Subscription
 from accounts.models import CustomUser
+from accounts.email_utils import send_professional_email
 from .forms import AnswerForm, QuestionForm
 
 def question_list(request):
@@ -105,8 +105,23 @@ def handle_request(request, req_id):
             # إرسال إيميل للعميل مع رابط الاستشارة
             if req.question.link and req.client.email:
                 subject = 'تم قبول طلب الاشتراك في الاستشارة'
-                message = f'مرحباً {req.client.username},\n\nتم قبول طلبك في الاستشارة "{req.question.title}".\nيمكنك الوصول إلى رابط الاستشارة هنا:\n{req.question.link}\n\nمع تحياتنا.'
-                send_mail(subject, message, getattr(settings, 'DEFAULT_FROM_EMAIL', None), [req.client.email], fail_silently=True)
+                message_text = f"""مرحباً {req.client.username},
+
+تم قبول طلبك للاشتراك في الاستشارة "{req.question.title}"
+
+بيانات الاستشارة:
+- عنوان الاستشارة: {req.question.title}
+- صاحب الاستشارة: {req.question.user.username}
+
+يمكنك الوصول إلى رابط الاستشارة هنا:
+{req.question.link}
+
+شكراً لاختيارك خدماتنا."""
+                send_professional_email(
+                    subject=subject,
+                    recipient_email=req.client.email,
+                    message_text=message_text
+                )
             messages.success(request, 'تم قبول الطلب وإرسال الرابط للعميل.')
         elif action == 'reject' and req.status == 'pending':
             req.status = 'rejected'
